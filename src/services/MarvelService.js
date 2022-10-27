@@ -1,6 +1,4 @@
 
-
-
 class MarvelService {
     _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     _apiKey = 'apikey=07d354e13c1e5176761056755896107a';
@@ -14,10 +12,6 @@ class MarvelService {
 
         return await res.json();
     }
-
-    // getAllCharacters = () => {
-    //     return this.getResource(`${this._apiBase}characters?${this._apiKey}`);
-    // }
     
     getAllCharacters = async () => {
         const res = await this.getResource(`${this._apiBase}characters?${this._apiKey}`);
@@ -26,19 +20,40 @@ class MarvelService {
 
     getCharacter = async (id) => {
         const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
-        return this._transformCharacter(res);
+        return this._transformCharacter(res.data.results[0]);
     }
 
-
-    _transformCharacter = (res) => {
+    _transformCharacter = (char) => {
         return {
-            name: res.data.results[0].name,
-            description: res.data.results[0].description,
-            thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
-            homepage: res.data.results[0].urls[0].url,
-            wiki: res.data.results[0].urls[1].url
+            id: char.id,
+            name: char.name,
+            description: char.description ? `${char.description.slice(0, 210)}...` : 'There is no description for this character',
+            thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
+            homepage: char.urls[0].url,
+            wiki: char.urls[1].url,
+            comics: char.comics.items
         }
     }
 }
 
 export default MarvelService;
+
+
+
+
+
+
+
+// getAllCharacters = () => {
+//     return this.getResource(`${this._apiBase}characters?${this._apiKey}`);
+// }
+
+// _transformCharacter = (res) => {
+//     return {
+//         name: res.data.results[0].name,
+//         description: res.data.results[0].description,
+//         thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
+//         homepage: res.data.results[0].urls[0].url,
+//         wiki: res.data.results[0].urls[1].url
+//     }
+// }
